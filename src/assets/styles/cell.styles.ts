@@ -75,8 +75,8 @@ export const TaskCount = styled.span`
     display: inline;
   }
 
-  @media (max-width: 425px) {
-    font-size: 8px;
+  @media (max-width: 768px) {
+    font-size: 9px;
 
     .count-label {
       display: none;
@@ -102,12 +102,16 @@ export const TaskList = styled.div`
     border-radius: 2px;
   }
 
+  @media (max-width: 768px) {
+    max-height: 90px;
+  }
+
   @media (max-width: 425px) {
-    max-height: 80px;
+    max-height: 70px;
   }
 
   @media (max-width: 374px) {
-    max-height: 60px;
+    max-height: 55px;
   }
 `;
 
@@ -129,7 +133,7 @@ export const AddTaskButton = styled.button`
     color: #5e6c84;
   }
 
-  @media (max-width: 425px) {
+  @media (max-width: 768px) {
     font-size: 10px;
     padding: 3px 2px;
     text-align: center;

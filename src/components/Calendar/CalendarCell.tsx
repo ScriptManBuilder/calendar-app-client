@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import type { CalendarDay, Task, Holiday } from '../../types';
 import { isToday, parseDate } from '../../utils/calendar';
 import { TaskItem } from './TaskItem';
@@ -53,6 +54,11 @@ export const CalendarCell = ({
     dayNum === 1
       ? `${date.toLocaleString('en-US', { month: 'short' })} ${dayNum}`
       : String(dayNum);
+
+  const dateLabel = date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
 
   /* ── Drag-and-drop handlers ───────────────────────────── */
 
@@ -130,7 +136,7 @@ export const CalendarCell = ({
         <DayNumber $isToday={today}>{displayDay}</DayNumber>
         {tasks.length > 0 && (
           <TaskCount>
-            {tasks.length} card{tasks.length !== 1 ? 's' : ''}
+            {tasks.length}<span className="count-label"> card{tasks.length !== 1 ? 's' : ''}</span>
           </TaskCount>
         )}
       </CellHeader>
@@ -145,11 +151,15 @@ export const CalendarCell = ({
           <React.Fragment key={task._id}>
             {isDragOver && dropIndex === index && <DropIndicator />}
             {editingTask?._id === task._id ? (
-              <TaskForm
-                task={task}
-                onSubmit={handleEditSubmit}
-                onCancel={() => setEditingTask(null)}
-              />
+              createPortal(
+                <TaskForm
+                  task={task}
+                  onSubmit={handleEditSubmit}
+                  onCancel={() => setEditingTask(null)}
+                  dateLabel={dateLabel}
+                />,
+                document.body,
+              )
             ) : (
               <TaskItem
                 task={task}
@@ -165,18 +175,22 @@ export const CalendarCell = ({
           </React.Fragment>
         ))}
         {isDragOver && dropIndex === tasks.length && <DropIndicator />}
+      </TaskList>
 
-        {isAdding && (
+      {isAdding &&
+        createPortal(
           <TaskForm
             onSubmit={handleAddSubmit}
             onCancel={() => setIsAdding(false)}
-          />
+            dateLabel={dateLabel}
+          />,
+          document.body,
         )}
-      </TaskList>
 
       {!isAdding && !editingTask && (
         <AddTaskButton onClick={() => setIsAdding(true)}>
-          + Add card
+          <span className="full">+ Add card</span>
+          <span className="short">+</span>
         </AddTaskButton>
       )}
     </CellWrapper>

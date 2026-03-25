@@ -60,7 +60,12 @@ export const CalendarGrid = styled.div`
   background: #cdd2d4;
   overflow: hidden;
 
-  @media (max-width: 425px) {
+  @media (max-width: 768px) {
     overflow-y: auto;
+    grid-template-rows: repeat(6, minmax(70px, auto));
+  }
+
+  @media (max-width: 425px) {
+    grid-template-rows: repeat(6, minmax(56px, auto));
   }
 `;

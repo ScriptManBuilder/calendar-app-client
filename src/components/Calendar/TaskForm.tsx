@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Task } from '../../types';
 import {
   TaskFormWrapper,
@@ -7,6 +7,9 @@ import {
   LabelOption,
   FormActions,
   FormButton,
+  MobileFormOverlay,
+  MobileFormContent,
+  MobileFormTitle,
 } from '../../assets/styles/task.styles';
 
 const LABEL_COLORS = [
@@ -22,12 +25,27 @@ interface TaskFormProps {
   task?: Task;
   onSubmit: (title: string, labels: string[]) => void;
   onCancel: () => void;
+  dateLabel?: string;
 }
 
-export const TaskForm = ({ task, onSubmit, onCancel }: TaskFormProps) => {
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia('(max-width: 768px)').matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return isMobile;
+};
+
+export const TaskForm = ({ task, onSubmit, onCancel, dateLabel }: TaskFormProps) => {
   const [title, setTitle] = useState(task?.title ?? '');
   const [labels, setLabels] = useState<string[]>(task?.labels ?? []);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -50,7 +68,14 @@ export const TaskForm = ({ task, onSubmit, onCancel }: TaskFormProps) => {
     if (e.key === 'Escape') onCancel();
   };
 
-  return (
+  const handleOverlayClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget) onCancel();
+    },
+    [onCancel],
+  );
+
+  const formContent = (
     <TaskFormWrapper onClick={(e) => e.stopPropagation()}>
       <TaskInput
         ref={inputRef}
@@ -80,4 +105,19 @@ export const TaskForm = ({ task, onSubmit, onCancel }: TaskFormProps) => {
       </FormActions>
     </TaskFormWrapper>
   );
+
+  if (isMobile) {
+    return (
+      <MobileFormOverlay onClick={handleOverlayClick}>
+        <MobileFormContent>
+          <MobileFormTitle>
+            {task ? 'Edit task' : 'New task'}{dateLabel ? ` — ${dateLabel}` : ''}
+          </MobileFormTitle>
+          {formContent}
+        </MobileFormContent>
+      </MobileFormOverlay>
+    );
+  }
+
+  return formContent;
 };

@@ -37,6 +37,8 @@ export const CellHeader = styled.div`
   justify-content: space-between;
   padding: 2px 4px;
   flex-shrink: 0;
+  gap: 2px;
+  min-width: 0;
 
   @media (max-width: 374px) {
     padding: 1px 2px;
@@ -66,9 +68,19 @@ export const DayNumber = styled.span<{ $isToday: boolean }>`
 export const TaskCount = styled.span`
   font-size: 11px;
   color: #8c8c8c;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  .count-label {
+    display: inline;
+  }
 
   @media (max-width: 425px) {
-    font-size: 9px;
+    font-size: 8px;
+
+    .count-label {
+      display: none;
+    }
   }
 
   @media (max-width: 374px) {
@@ -89,6 +101,14 @@ export const TaskList = styled.div`
     background: #c4c9cc;
     border-radius: 2px;
   }
+
+  @media (max-width: 425px) {
+    max-height: 80px;
+  }
+
+  @media (max-width: 374px) {
+    max-height: 60px;
+  }
 `;
 
 export const AddTaskButton = styled.button`
@@ -100,6 +120,10 @@ export const AddTaskButton = styled.button`
   border-radius: 3px;
   flex-shrink: 0;
 
+  .short {
+    display: none;
+  }
+
   &:hover {
     background: #e2e4e6;
     color: #5e6c84;
@@ -107,12 +131,26 @@ export const AddTaskButton = styled.button`
 
   @media (max-width: 425px) {
     font-size: 10px;
-    padding: 1px 2px;
+    padding: 3px 2px;
+    text-align: center;
+    width: 100%;
+    margin-top: 1px;
+
+    .full {
+      display: none;
+    }
+
+    .short {
+      display: inline;
+      font-size: 16px;
+      font-weight: 700;
+    }
   }
 
   @media (max-width: 374px) {
-    font-size: 9px;
     margin-top: 1px;
+    padding: 2px;
+    line-height: 1;
   }
 `;
 
